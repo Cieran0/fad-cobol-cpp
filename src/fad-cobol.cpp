@@ -15,6 +15,30 @@ bool contains(const std::vector<T>& vec, const T& value) {
     return std::find(vec.begin(), vec.end(), value) != vec.end();
 }
 
+std::vector<std::vector<std::string>> gather_statements(std::vector<std::string> program) {
+    std::vector<std::vector<std::string>> statments;
+    std::vector<std::string> current_statement;
+    while (!program.empty())
+    {
+        std::string word = program[0];
+        current_statement.push_back(word);
+
+        if(word == ".") {
+            statments.push_back(current_statement);
+            current_statement.clear();
+        }
+
+        program.erase(program.begin());
+    }
+
+    if(!current_statement.empty()) {
+        //ERROR
+        exit(-20);
+    }
+
+    return statments;
+}
+
 std::vector<std::string> read_file(char* filepath) {
     std::vector<std::string> output;
     std::string line;
@@ -143,6 +167,19 @@ int main(int argc, char** argv) {
         std::cout << code << std::endl;
     }
 
+    std::vector<std::vector<std::string>> statements = gather_statements(program);
+
+    for (const std::vector<std::string>& statement : statements) { 
+        std::cout << "[ ";
+        for (const std::string& word : statement) { 
+            if(word == ".") {
+                std::cout << ".";
+            } else {
+                std::cout << word << ", ";
+            }
+        }
+        std::cout << "]" << std::endl;
+    }
 
     return 0;
 }

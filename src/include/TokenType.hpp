@@ -1,0 +1,27 @@
+#pragma once
+
+enum TokenType
+{
+    UNKNOWN,
+    IDENTIFICATION,
+    DIVISION,
+    END_OF_STATEMENT,
+    PROGRAM_ID,
+    DATA,
+    WORKING_STORAGE,
+    SECTION,
+    PIC,
+    VALUE,
+    PROCEDURE,
+    COMPUTE,
+    ASSIGNMENT,
+    ADDITION,
+    SUBTRACTION,
+    MULTIPLICATION,
+    DIVIDE,
+    STOP,
+    DISPLAY,
+    RUN,
+    NUMBER,
+    STRING,
+};

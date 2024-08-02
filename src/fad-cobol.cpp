@@ -4,6 +4,9 @@
 #include <fstream>
 #include <algorithm>
 #include <cctype>
+#include <Token.hpp>
+#include <ExecutionEngine.hpp>
+#include <Util.hpp>
 
 std::vector<char> key_symbols_chars = {
    //">=", "<=", "<>", "*>", ">>", "==", "**", 
@@ -152,6 +155,23 @@ std::vector<std::string> parse_program(std::vector<std::string> file) {
     return program;
 }
 
+std::vector<std::vector<Token>> tokenize(std::vector<std::vector<std::string>> program) 
+{   
+    std::vector<std::vector<Token>> tokens;
+    std::vector<Token> current_statement;
+
+    for (const std::vector<std::string>& statement : program) { 
+        for (const std::string& word : statement) { 
+            Token token(word);
+            current_statement.push_back(token);
+        }
+        tokens.push_back(current_statement);
+        current_statement.clear();
+    }
+
+    return tokens;
+}
+
 int main(int argc, char** argv) {
     if(argc < 2){
         return -1;
@@ -164,22 +184,32 @@ int main(int argc, char** argv) {
     std::vector<std::string> program = parse_program(file);
 
     for (const std::string& code : program) { 
-        std::cout << code << std::endl;
+        logger << code << std::endl;
     }
 
     std::vector<std::vector<std::string>> statements = gather_statements(program);
 
-    for (const std::vector<std::string>& statement : statements) { 
-        std::cout << "[ ";
-        for (const std::string& word : statement) { 
-            if(word == ".") {
-                std::cout << ".";
+    std::vector<std::vector<Token>> tokens = tokenize(statements);
+
+    for (const std::vector<Token>& statement : tokens) { 
+        logger << "[ ";
+        for (Token word : statement) { 
+            if(word.to_string() == ".") {
+                logger << ".";
             } else {
-                std::cout << word << ", ";
+                logger << word.to_string() << ", ";
             }
         }
-        std::cout << "]" << std::endl;
+        logger << "]" << std::endl;
     }
+
+    ExecutionEngine ee(tokens);
+
+    while (!ee.execution_complete())
+    {
+        ee.step();
+    }
+    
 
     return 0;
 }
